@@ -180,7 +180,7 @@ function flashCard() {
       >
         <div
           style={{
-            backgroundImage: `url("../public/pictures/image (${ImgCounterF}).jpg")`,
+            backgroundImage: `url("../pictures/image (${ImgCounterF}).jpg")`,
             backgroundPosition: "center",
             backgroundSize: "cover",
             filter: "blur(8px)",
@@ -189,7 +189,7 @@ function flashCard() {
           }}
         ></div>
         <img
-          src={`../public/pictures/image (${ImgCounterF}).jpg`}
+          src={`../pictures/image (${ImgCounterF}).jpg`}
           width={window.innerWidth}
           height={window.innerHeight}
           draggable="false"
@@ -219,7 +219,7 @@ function flashCard() {
       >
         <div
           style={{
-            backgroundImage: `url("../public/pictures/image (${ImgCounterB}).jpg")`,
+            backgroundImage: `url("../pictures/image (${ImgCounterB}).jpg")`,
             backgroundPosition: "center",
             backgroundSize: "cover",
             filter: "blur(8px)",
@@ -228,7 +228,7 @@ function flashCard() {
           }}
         ></div>
         <img
-          src={`../public/pictures/image (${ImgCounterB}).jpg`}
+          src={`../pictures/image (${ImgCounterB}).jpg`}
           width={window.innerWidth}
           height={window.innerHeight}
           draggable="false"
