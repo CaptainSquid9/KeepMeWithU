@@ -1,20 +1,7 @@
 {
-  "name": "1gb-of-mem",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "@types/react-dom": "^18.3.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0"
-  },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  }
+  "workspaces": [
+    "google-drive-service",
+    "react"
+  ]
 }
