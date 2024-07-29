@@ -63,10 +63,10 @@ function flashCard() {
 
   const fetchRandomPhoto = async (id: number) => {
     try {
-      const response = await axios.get("http://localhost:3000/random-photo");
+      const response = await axios.get("/api/randomPhoto");
       const photoId = response.data.photoId;
       const func = setPhotoUrl[id];
-      func(`http://localhost:3000/photo/${photoId}`);
+      func(`/api/photo/${photoId}`);
     } catch (error) {
       console.error("Error fetching photo", error);
     }
