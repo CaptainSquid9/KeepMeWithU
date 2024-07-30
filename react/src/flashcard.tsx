@@ -68,10 +68,11 @@ function flashCard() {
           "Content-Type": "application/json",
         },
         withCredentials: true, // Ensure credentials are included if needed
+        responseType: "blob",
       });
-      const photoId = response.data.photoId;
+      const imageUrl = URL.createObjectURL(response.data);
       const func = setPhotoUrl[id];
-      func(`api/photo/${photoId}`);
+      func(imageUrl);
     } catch (error) {
       console.error("Error fetching photo", error);
     }

@@ -1,4 +1,5 @@
 const { google } = require("googleapis");
+const stream = require("stream");
 
 // Load service account credentials from environment variable
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
@@ -11,7 +12,6 @@ const jwtClient = new google.auth.JWT(
   ["https://www.googleapis.com/auth/drive.readonly"]
 );
 
-// Function to fetch a random photo
 async function fetchRandomPhoto() {
   const drive = google.drive({ version: "v3", auth: jwtClient });
   const response = await drive.files.list({
@@ -40,38 +40,65 @@ exports.handler = async function (event, context) {
   }
 
   try {
-    const photoId = await fetchRandomPhoto();
-    if (photoId) {
-      return {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "Content-Type",
-        },
-        body: JSON.stringify({ photoId }),
-      };
-    } else {
+    const fileId = await fetchRandomPhoto();
+    if (!fileId) {
       return {
         statusCode: 404,
         headers: {
           "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "Content-Type",
+          "Content-Type": "application/json",
         },
-        body: "No photos found",
+        body: JSON.stringify({ error: "No photos found" }),
       };
     }
+
+    const drive = google.drive({ version: "v3", auth: jwtClient });
+    const response = await drive.files.get(
+      { fileId, alt: "media" },
+      { responseType: "stream" }
+    );
+
+    const bufferStream = new stream.PassThrough();
+    response.data.pipe(bufferStream);
+
+    let chunks = [];
+    bufferStream.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+
+    return new Promise((resolve, reject) => {
+      bufferStream.on("end", () => {
+        const responseBuffer = Buffer.concat(chunks);
+        resolve({
+          statusCode: 200,
+          headers: {
+            "Content-Type": "image/jpeg", // Adjust the content type as needed
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: responseBuffer.toString("base64"),
+          isBase64Encoded: true,
+        });
+      });
+
+      bufferStream.on("error", (err) => {
+        console.error("Error", err);
+        resolve({
+          statusCode: 500,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: "Error fetching photo",
+        });
+      });
+    });
   } catch (error) {
     console.error("Error fetching photo:", error);
     return {
       statusCode: 500,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
       },
-      body: JSON.stringify({
-        error: "Error fetching photo",
-        details: error.message,
-      }),
+      body: "Error fetching photo",
     };
   }
 };
