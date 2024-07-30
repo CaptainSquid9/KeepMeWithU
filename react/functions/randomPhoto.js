@@ -1,6 +1,4 @@
 const { google } = require("googleapis");
-const fs = require("fs");
-const path = require("path");
 
 // Load service account credentials from environment variable
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
@@ -29,13 +27,25 @@ async function fetchRandomPhoto() {
 }
 
 exports.handler = async function (event, context) {
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+      },
+      body: "",
+    };
+  }
+
   try {
     const photoId = await fetchRandomPhoto();
     if (photoId) {
       return {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*", // Allow requests from any origin
+          "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "Content-Type",
         },
         body: JSON.stringify({ photoId }),
