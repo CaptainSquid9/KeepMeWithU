@@ -70,7 +70,7 @@ function flashCard() {
       });
       const photoId = response.data.photoId;
       const func = setPhotoUrl[id];
-      func(`/api/photo/${photoId}`);
+      func(`https://drive.google.com/uc?id=${photoId}`);
     } catch (error) {
       console.error("Error fetching photo", error);
     }
