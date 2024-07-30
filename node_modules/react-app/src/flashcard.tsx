@@ -226,9 +226,10 @@ function flashCard() {
           width={window.innerWidth}
           height={window.innerHeight}
           draggable="false"
-          onError={() => {
+          /**        onError={() => {
             fetchRandomPhoto(0);
           }}
+*/
         ></img>
       </div>
       <div
@@ -270,9 +271,10 @@ function flashCard() {
           width={window.innerWidth}
           height={window.innerHeight}
           draggable="false"
-          onError={() => {
-            fetchRandomPhoto(1);
+          /**        onError={() => {
+            fetchRandomPhoto(0);
           }}
+*/
         ></img>
       </div>
       <div
@@ -310,9 +312,10 @@ function flashCard() {
           width={window.innerWidth}
           height={window.innerHeight}
           draggable="false"
-          onError={() => {
-            fetchRandomPhoto(2);
+          /**        onError={() => {
+            fetchRandomPhoto(0);
           }}
+*/
         ></img>
       </div>
       <div
@@ -354,9 +357,10 @@ function flashCard() {
           width={window.innerWidth}
           height={window.innerHeight}
           draggable="false"
-          onError={() => {
-            fetchRandomPhoto(3);
+          /**        onError={() => {
+            fetchRandomPhoto(0);
           }}
+*/
         ></img>
       </div>
     </div>
