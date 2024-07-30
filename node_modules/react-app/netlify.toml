@@ -1,11 +1,5 @@
-
 [build]
-publish = "C:\\Users\\Asus\\OneDrive\\Escritorio\\Personal\\1Gb of mem\\Mem2U\\react\\dist"
-publishOrigin = "ui"
-commandOrigin = "ui"
-base = "C:\\Users\\Asus\\OneDrive\\Escritorio\\Personal\\1Gb of mem\\Mem2U\\react"
-command = "npm run build"
-functions = "C:\\Users\\Asus\\OneDrive\\Escritorio\\Personal\\1Gb of mem\\Mem2U\\react\\functions"
+  functions = "functions"
 
 [[redirects]]
   from = "/api/*"
