@@ -2,9 +2,8 @@ const { google } = require("googleapis");
 const fs = require("fs");
 const path = require("path");
 
-// Load service account credentials
-const keyFile = path.resolve(__dirname, "service.json");
-const credentials = JSON.parse(fs.readFileSync(keyFile));
+// Load service account credentials from environment variable
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
 // Configure JWT client
 const jwtClient = new google.auth.JWT(
