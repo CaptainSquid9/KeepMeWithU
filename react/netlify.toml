@@ -5,3 +5,8 @@
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
+
+[functions]
+  directory = "functions"
+  # You can specify any external dependencies here
+  external_node_modules = ["googleapis", "fs", "path"]
