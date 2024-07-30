@@ -2,7 +2,7 @@ const { google } = require("googleapis");
 const fs = require("fs");
 
 // Load service account credentials
-const keyFile = "./mem2u-430622-19b5c17221bb.json";
+const keyFile = "mem2u-430622-19b5c17221bb.json";
 const credentials = JSON.parse(fs.readFileSync(keyFile));
 
 // Configure JWT client
