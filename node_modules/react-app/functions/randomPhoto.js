@@ -31,15 +31,37 @@ async function fetchRandomPhoto() {
 exports.handler = async function (event, context) {
   try {
     const photoId = await fetchRandomPhoto();
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ photoId }),
-    };
+    if (photoId) {
+      return {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*", // Allow requests from any origin
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+        body: JSON.stringify({ photoId }),
+      };
+    } else {
+      return {
+        statusCode: 404,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+        body: "No photos found",
+      };
+    }
   } catch (error) {
     console.error("Error fetching photo:", error);
     return {
       statusCode: 500,
-      body: "Error fetching photo",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+      body: JSON.stringify({
+        error: "Error fetching photo",
+        details: error.message,
+      }),
     };
   }
 };

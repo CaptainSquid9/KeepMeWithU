@@ -63,7 +63,11 @@ function flashCard() {
 
   const fetchRandomPhoto = async (id: number) => {
     try {
-      const response = await axios.get("/api/randomPhoto");
+      const response = await axios.get("/api/randomPhoto", {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
       const photoId = response.data.photoId;
       const func = setPhotoUrl[id];
       func(`/api/photo/${photoId}`);
