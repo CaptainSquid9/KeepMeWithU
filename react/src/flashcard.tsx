@@ -36,13 +36,30 @@ function flashCard() {
   // Fetch random photo for each layer
   const [photoUrl, setPhotoUrl] = useState<StringObject>({});
 
-  for (const elem in Array(Layers)) {
-    setDivX({ ...divX, [elem]: window.innerWidth / 2 });
-    setDivY({ ...divY, [elem]: window.innerHeight / 2 });
-    setSwipedBool({ ...SwipedBool, [elem]: false });
-    setCounter({ ...Counter, [elem]: 1000 - Number(elem) });
-    setPhotoUrl({ ...photoUrl, [elem]: "" });
-  }
+  const Start = (elem: number) => {
+    let strElem = elem.toString();
+    console.log(elem);
+    setDivX((prevState) => ({
+      ...prevState,
+      [strElem]: window.innerWidth / 2,
+    }));
+    setDivY((prevState) => ({
+      ...prevState,
+      [strElem]: window.innerHeight / 2,
+    }));
+    setSwipedBool((prevState) => ({ ...prevState, [strElem]: false }));
+    setCounter((prevState) => ({
+      ...prevState,
+      [strElem]: 1000 - elem,
+    }));
+    setPhotoUrl((prevState) => ({ ...prevState, [strElem]: "" }));
+  };
+
+  useEffect(() => {
+    for (var elem = 0; elem < Layers; elem++) {
+      Start(elem);
+    }
+  }, []);
 
   //Random photo
   // Called by every layer
@@ -57,7 +74,7 @@ function flashCard() {
         responseType: "blob",
       });
       const imageUrl = URL.createObjectURL(response.data);
-      setPhotoUrl({ ...photoUrl, [id]: imageUrl });
+      setPhotoUrl((prevState) => ({ ...prevState, [id]: imageUrl }));
     } catch (error) {
       console.error("Error fetching photo", error);
     }
@@ -72,6 +89,7 @@ function flashCard() {
   const positionFollowTouch = (e: React.TouchEvent<HTMLDivElement>) => {
     console.log(e.touches[0].clientX, e.touches[0].clientY, e.currentTarget.id);
     const id = Number(e.currentTarget.id);
+    const StrID = id.toString();
     var back;
     if (id == 0) {
       back = Layers;
@@ -80,8 +98,8 @@ function flashCard() {
     }
 
     if (Counter[id] > Counter[back] && SwipedBool[id] == false) {
-      setDivX({ ...divX, [id]: e.touches[0].clientX });
-      setDivY({ ...divY, [id]: e.touches[0].clientY });
+      setDivX((prevState) => ({ ...prevState, [StrID]: e.touches[0].clientX }));
+      setDivY((prevState) => ({ ...prevState, [StrID]: e.touches[0].clientY }));
     }
   };
 
@@ -90,7 +108,7 @@ function flashCard() {
     if (MouseDownBool) {
       console.log(e.clientX, e.clientY);
       const id = Number(e.currentTarget.id);
-
+      const StrID = id.toString();
       var back;
       if (id == 0) {
         back = Layers;
@@ -98,8 +116,8 @@ function flashCard() {
         back = id;
       }
       if (Counter[id] > Counter[back] && SwipedBool[id] == false) {
-        setDivX({ ...divX, [id]: e.clientX });
-        setDivY({ ...divY, [id]: e.clientY });
+        setDivX((prevState) => ({ ...prevState, [StrID]: e.clientX }));
+        setDivY((prevState) => ({ ...prevState, [StrID]: e.clientY }));
       }
     }
   };
@@ -107,7 +125,8 @@ function flashCard() {
   //Swipe animations
 
   const Swipe = (id: number) => {
-    setSwipedBool({ id: true });
+    const StrID = id.toString();
+    setSwipedBool({ [StrID]: true });
 
     var SlideInterval: number;
     var InternalCounterX = divX[id];
@@ -116,8 +135,8 @@ function flashCard() {
     //Move flash card on one of the four diagonals depending on quadrile
     if (divX[id] > window.innerWidth / 2 && divY[id] > window.innerHeight / 2) {
       SlideInterval = setInterval(() => {
-        setDivX({ ...divX, [id]: InternalCounterX });
-        setDivY({ ...divY, [id]: InternalCounterY });
+        setDivX((prevState) => ({ ...prevState, [StrID]: InternalCounterX }));
+        setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
         InternalCounterX += 1;
         InternalCounterY += 1;
       }, 10);
@@ -126,8 +145,8 @@ function flashCard() {
       divY[id] < window.innerHeight / 2
     ) {
       SlideInterval = setInterval(() => {
-        setDivX({ ...divX, [id]: InternalCounterX });
-        setDivY({ ...divY, [id]: InternalCounterY });
+        setDivX((prevState) => ({ ...prevState, [StrID]: InternalCounterX }));
+        setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
         InternalCounterX -= 1;
         InternalCounterY -= 1;
       }, 10);
@@ -136,8 +155,8 @@ function flashCard() {
       divY[id] < window.innerHeight / 2
     ) {
       SlideInterval = setInterval(() => {
-        setDivX({ ...divX, [id]: InternalCounterX });
-        setDivY({ ...divY, [id]: InternalCounterY });
+        setDivX((prevState) => ({ ...prevState, [StrID]: InternalCounterX }));
+        setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
         InternalCounterX += 1;
         InternalCounterY -= 1;
       }, 10);
@@ -146,8 +165,8 @@ function flashCard() {
       divY[id] > window.innerHeight / 2
     ) {
       SlideInterval = setInterval(() => {
-        setDivX({ ...divX, [id]: InternalCounterX });
-        setDivY({ ...divY, [id]: InternalCounterY });
+        setDivX((prevState) => ({ ...prevState, [StrID]: InternalCounterX }));
+        setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
         InternalCounterX -= 1;
         InternalCounterY += 1;
       }, 10);
@@ -158,10 +177,19 @@ function flashCard() {
       clearInterval(SlideInterval);
       setSwipedBool({ ...SwipedBool, id: false });
       fetchRandomPhoto(String(id));
-      setDivX({ ...divX, [id]: window.innerWidth / 2 });
-      setDivY({ ...divY, [id]: window.innerHeight / 2 });
+      setDivX((prevState) => ({
+        ...prevState,
+        [StrID]: window.innerWidth / 2,
+      }));
+      setDivY((prevState) => ({
+        ...prevState,
+        [StrID]: window.innerHeight / 2,
+      }));
       // setImgCounterF(ImgCounterF + 2);
-      setCounter({ ...Counter, [id]: [Counter[id] - 2] });
+      setCounter((prevState) => ({
+        ...prevState,
+        [StrID]: Counter[id] - Layers,
+      }));
     }, 1000);
   };
   return (
