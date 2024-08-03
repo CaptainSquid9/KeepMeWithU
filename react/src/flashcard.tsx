@@ -30,9 +30,6 @@ function flashCard() {
   //Z-index counter for each layer
   const [Counter, setCounter] = useState<ValuesObject>({});
 
-  //const [ImgCounterF, setImgCounterF] = useState<number>(1);
-  //const [ImgCounterB, setImgCounterB] = useState<number>(2);
-
   // Fetch random photo for each layer
   const [photoUrl, setPhotoUrl] = useState<StringObject>({});
 
@@ -87,9 +84,9 @@ function flashCard() {
 
   //Follow touch
   const positionFollowTouch = (e: React.TouchEvent<HTMLDivElement>) => {
-    console.log(e.touches[0].clientX, e.touches[0].clientY, e.currentTarget.id);
     const id = Number(e.currentTarget.id);
-    const StrID = id.toString();
+    const StrID = String(id);
+    console.log(divX[id], divY[id], id, StrID);
     var back;
     if (id == 0) {
       back = Layers;
@@ -97,7 +94,7 @@ function flashCard() {
       back = id;
     }
 
-    if (Counter[id] > Counter[back] && SwipedBool[id] == false) {
+    if (SwipedBool[id] == false) {
       setDivX((prevState) => ({ ...prevState, [StrID]: e.touches[0].clientX }));
       setDivY((prevState) => ({ ...prevState, [StrID]: e.touches[0].clientY }));
     }
@@ -106,16 +103,16 @@ function flashCard() {
   //Follow mouse
   const positionFollowMouse = (e: React.MouseEvent<HTMLDivElement>) => {
     if (MouseDownBool) {
-      console.log(e.clientX, e.clientY);
       const id = Number(e.currentTarget.id);
-      const StrID = id.toString();
+      const StrID = String(id);
+      console.log(divX[id], divY[id], id, StrID);
       var back;
       if (id == 0) {
         back = Layers;
       } else {
-        back = id;
+        back = id - 1;
       }
-      if (Counter[id] > Counter[back] && SwipedBool[id] == false) {
+      if (SwipedBool[id] == false) {
         setDivX((prevState) => ({ ...prevState, [StrID]: e.clientX }));
         setDivY((prevState) => ({ ...prevState, [StrID]: e.clientY }));
       }
