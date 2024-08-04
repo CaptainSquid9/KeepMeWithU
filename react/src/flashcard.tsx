@@ -48,9 +48,9 @@ function flashCard() {
       Timer = setTimeout(() => {
         console.log("Swiping 0");
         Swipe(10);
-      }, 10000);
+      }, 1000);
       setIdleTimer(Timer);
-    } else {
+    } else if (LoadedPictures < Layers - 1) {
       let strElem = elem.toString();
 
       //Set default
@@ -173,7 +173,7 @@ function flashCard() {
           setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
           InternalCounterX += 1;
           InternalCounterY += 1;
-        }, 10);
+        }, 100);
       } else if (
         divX[id] < window.innerWidth / 2 &&
         divY[id] < window.innerHeight / 2
@@ -183,7 +183,7 @@ function flashCard() {
           setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
           InternalCounterX -= 1;
           InternalCounterY -= 1;
-        }, 10);
+        }, 100);
       } else if (
         divX[id] > window.innerWidth / 2 &&
         divY[id] < window.innerHeight / 2
@@ -193,14 +193,14 @@ function flashCard() {
           setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
           InternalCounterX += 1;
           InternalCounterY -= 1;
-        }, 10);
+        }, 100);
       } else {
         SlideInterval = setInterval(() => {
           setDivX((prevState) => ({ ...prevState, [StrID]: InternalCounterX }));
           setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
           InternalCounterX -= 1;
           InternalCounterY += 1;
-        }, 10);
+        }, 100);
       }
 
       Timer = setTimeout(() => {
@@ -232,7 +232,7 @@ function flashCard() {
           ...prevState,
           [StrID]: Counter[id] - Layers,
         }));
-        console.log(Counter);
+        console.log(Counter[id] - Layers);
       }, 1000);
     }
   };
