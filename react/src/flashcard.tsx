@@ -2,17 +2,18 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./flashcard.css";
 
-function flashCard() {
-  type ValuesObject = {
-    [key: string]: number; // This allows indexing with numbers
-  };
-  type BoolsObject = {
-    [key: string]: boolean; // This allows indexing with numbers
-  };
-  type StringObject = {
-    [key: string]: string; // This allows indexing with numbers
-  };
+type ValuesObject = {
+  [key: string]: number; // This allows indexing with numbers
+};
+type BoolsObject = {
+  [key: string]: boolean; // This allows indexing with numbers
+};
+type StringObject = {
+  [key: string]: string; // This allows indexing with numbers
+};
 
+var CounterOut: ValuesObject;
+function flashCard() {
   var Timer: number | undefined;
   var [IdleTimer, setIdleTimer] = useState<number | undefined>();
   const [LoadedPictures, setLoadedPictures] = useState<number>(0);
@@ -30,31 +31,30 @@ function flashCard() {
   const [MouseDownBool, setMDBool] = useState<boolean>(false);
   const [Allow, setAllow] = useState<boolean>(false);
   var AllowSlide = false;
-
   //Bool checking if swiped for each layer
   const [SwipedBool, setSwipedBool] = useState<BoolsObject>({});
   //Z-index counter for each layer
   const [Counter, setCounter] = useState<ValuesObject>({});
 
+  const setCounterOut = setCounter;
+
   // Fetch random photo for each layer
   const [photoUrl, setPhotoUrl] = useState<StringObject>({});
 
-  const Start = (elem: number) => {
+  function Start(elem: number) {
     setLoadedPictures(LoadedPictures + 1);
     console.log(`Loaded pictures: ${LoadedPictures}`);
     if (LoadedPictures == Layers - 1) {
-      AllowSlide = true;
       setAllow(true);
+      AllowSlide = true;
       Timer = setTimeout(() => {
-        console.log("Swiping 0");
-        Swipe(10);
+        Swipe(0, false);
       }, 1000);
       setIdleTimer(Timer);
     } else if (LoadedPictures < Layers - 1) {
       let strElem = elem.toString();
 
       //Set default
-      console.log(elem);
       setDivX((prevState) => ({
         ...prevState,
         [strElem]: window.innerWidth / 2,
@@ -64,14 +64,15 @@ function flashCard() {
         [strElem]: window.innerHeight / 2,
       }));
       setSwipedBool((prevState) => ({ ...prevState, [strElem]: false }));
-      setCounter((prevState) => ({
+      setCounterOut((prevState) => ({
         ...prevState,
-        [strElem]: 1000 - elem,
+        [strElem]: 214748364 - elem,
       }));
-      console.log(Counter);
+      CounterOut = { ...CounterOut, [strElem]: 214748364 - elem };
+      console.log(CounterOut);
       // All images have been loaded: ALlow touch
     }
-  };
+  }
 
   //Random photo
   // Called by every layer
@@ -100,14 +101,13 @@ function flashCard() {
   }, []);
 
   //Follow touch
-  const positionFollowTouch = (e: React.TouchEvent<HTMLDivElement>) => {
+  function positionFollowTouch(e: React.TouchEvent<HTMLDivElement>) {
     if (Allow) {
       const id = Number(e.currentTarget.id);
       const StrID = id.toString();
 
       clearTimeout(IdleTimer);
       clearTimeout(Timer);
-      console.log(divX[id], divY[id], id, StrID);
 
       if (SwipedBool[id] == false) {
         setDivX((prevState) => ({
@@ -120,48 +120,35 @@ function flashCard() {
         }));
       }
     }
-  };
+  }
 
   //Follow mouse
-  const positionFollowMouse = (e: React.MouseEvent<HTMLDivElement>) => {
+  function positionFollowMouse(e: React.MouseEvent<HTMLDivElement>) {
     if (Allow && MouseDownBool) {
       const id = Number(e.currentTarget.id);
       const StrID = id.toString();
       clearTimeout(IdleTimer);
       clearTimeout(Timer);
-      console.log(divX[id], divY[id], id, StrID);
-      var back;
-      if (id == 0) {
-        back = Layers;
-      } else {
-        back = id - 1;
-      }
       if (SwipedBool[id] == false) {
         setDivX((prevState) => ({ ...prevState, [StrID]: e.clientX }));
         setDivY((prevState) => ({ ...prevState, [StrID]: e.clientY }));
       }
     }
-  };
+  }
 
   //Swipe animations
 
-  const Swipe = (id: number) => {
-    console.log(AllowSlide);
-    if (AllowSlide || id == 10 || Allow == true) {
-      clearTimeout(IdleTimer);
-      clearTimeout(Timer);
-      setAllow(true);
-      if (id == 10) {
-        id = 0;
-      }
-      Counter[id];
-      console.log(`Swiping ${id}, Counter ${Counter[id]}`);
-      const StrID = id.toString();
-      setSwipedBool((prevState) => ({ ...prevState, [StrID]: true }));
-
+  function Swipe(id: number, update: boolean) {
+    if ((AllowSlide == true || Allow == true) && update == false) {
       var SlideInterval: number;
       var InternalCounterX = divX[id];
       var InternalCounterY = divY[id];
+      const StrID = id.toString();
+
+      clearTimeout(IdleTimer);
+      clearTimeout(Timer);
+      setAllow(true);
+      setSwipedBool((prevState) => ({ ...prevState, [StrID]: true }));
 
       //Move flash card on one of the four diagonals depending on quadrile
       if (
@@ -205,13 +192,11 @@ function flashCard() {
 
       Timer = setTimeout(() => {
         if (id == 9) {
-          console.log("Swiping 9");
-          Swipe(0);
+          Swipe(0, false);
         } else {
-          console.log(`Swiping ${id + 1}`);
-          Swipe(id + 1);
+          Swipe(id + 1, false);
         }
-      }, 8000);
+      }, 4000);
 
       setIdleTimer(Timer);
 
@@ -228,14 +213,15 @@ function flashCard() {
           ...prevState,
           [StrID]: window.innerHeight / 2,
         }));
-        setCounter((prevState) => ({
+        setCounterOut((prevState) => ({
           ...prevState,
-          [StrID]: Counter[id] - Layers,
+          [StrID]: CounterOut[id] - Layers,
         }));
-        console.log(Counter[id] - Layers);
+        CounterOut = { ...CounterOut, [StrID]: CounterOut[id] - Layers };
       }, 1000);
+      console.log(`Updated: ${CounterOut[id]}`);
     }
-  };
+  }
 
   return (
     <div className="body">
@@ -250,7 +236,7 @@ function flashCard() {
                 clearTimeout(Timer);
             }}
             onTouchEnd={() => {
-              Swipe(i);
+              Swipe(i, false);
             }}
             onMouseDown={(e) => {
               setMDBool(true),
@@ -262,10 +248,7 @@ function flashCard() {
               positionFollowMouse(e);
             }}
             onMouseUp={(e) => {
-              setMDBool(false), positionFollowMouse(e), Swipe(i);
-            }}
-            onLoad={() => {
-              Start(i);
+              setMDBool(false), positionFollowMouse(e), Swipe(i, false);
             }}
             style={{ top: divY[i], left: divX[i], zIndex: Counter[i] }}
           >
@@ -284,6 +267,12 @@ function flashCard() {
               width={window.innerWidth}
               height={window.innerHeight}
               draggable="false"
+              onLoad={() => {
+                Start(i);
+              }}
+              onChange={() => {
+                Swipe(i, true);
+              }}
             ></img>
           </div>
         );
