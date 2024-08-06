@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "./flashcard.css";
+import { Auth } from "./GooglePicker";
+import { useNavigate, useParams } from "react-router-dom";
 
 type ValuesObject = {
   [key: string]: number; // This allows indexing with numbers
@@ -14,13 +15,17 @@ type StringObject = {
 
 var CounterOut: ValuesObject;
 function flashCard() {
-  var Timer: number | undefined;
-  var [IdleTimer, setIdleTimer] = useState<number | undefined>();
-  const [LoadedPictures, setLoadedPictures] = useState<number>(0);
+  const navigate = useNavigate();
 
+  var Timer: NodeJS.Timeout | undefined;
+  var [IdleTimer, setIdleTimer] = useState<NodeJS.Timeout | undefined>();
+  const [LoadedPictures, setLoadedPictures] = useState<number>(0);
   //position for each layer
   //Amount of layers to generate
   const Layers: number = 10;
+  //Sent from picker
+  var accessToken = Auth;
+  var { folderId } = useParams();
 
   //X
   const [divX, setDivX] = useState<ValuesObject>({});
@@ -78,22 +83,25 @@ function flashCard() {
   // Called by every layer
 
   const fetchRandomPhoto = async (id: string) => {
-    try {
-      const response = await axios.get("/api/randomPhoto", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true, // Ensure credentials are included if needed
-        responseType: "blob",
-      });
-      const imageUrl = URL.createObjectURL(response.data);
+    console.log(folderId);
+    const response = await fetch(`/api/randomPhoto?folderId=${folderId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (response.ok) {
+      const photoData = await response.json();
+      const imageUrl = photoData.image;
+      console.log(imageUrl);
       setPhotoUrl((prevState) => ({ ...prevState, [id]: imageUrl }));
-    } catch (error) {
-      console.error("Error fetching photo", error);
-      fetchRandomPhoto(id);
+    } else {
+      console.error("Error fetching photo", response.statusText);
     }
   };
   useEffect(() => {
+    if (!folderId) {
+      navigate("/");
+    }
     for (var i = 0; i < Layers; i++) {
       fetchRandomPhoto(i.toString());
       console.log("Fetching");
@@ -140,7 +148,7 @@ function flashCard() {
 
   function Swipe(id: number, update: boolean) {
     if ((AllowSlide == true || Allow == true) && update == false) {
-      var SlideInterval: number;
+      var SlideInterval: NodeJS.Timeout;
       var InternalCounterX = divX[id];
       var InternalCounterY = divY[id];
       const StrID = id.toString();

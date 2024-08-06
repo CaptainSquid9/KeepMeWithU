@@ -1,23 +1,25 @@
 const { google } = require("googleapis");
-const stream = require("stream");
+const { PassThrough } = require("stream");
 
-// Load service account credentials from environment variable
-const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+const clientId =
+  "1066485499060-0io67am55s3sbuj9qlru7dqb00olumd6.apps.googleusercontent.com";
+const clientSecret = "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";
+const redirectUri = "http://localhost:8888/auth/callback";
 
-// Configure JWT client
-const jwtClient = new google.auth.JWT(
-  credentials.client_email,
-  null,
-  credentials.private_key,
-  ["https://www.googleapis.com/auth/drive.readonly"]
-);
+async function fetchRandomPhoto(accessToken, folderId) {
+  const oauth2Client = new google.auth.OAuth2(
+    clientId,
+    clientSecret,
+    redirectUri
+  );
+  oauth2Client.setCredentials({ access_token: accessToken });
 
-async function fetchRandomPhoto() {
-  const drive = google.drive({ version: "v3", auth: jwtClient });
+  const drive = google.drive({ version: "v3", auth: oauth2Client });
   const response = await drive.files.list({
-    q: "mimeType contains 'image/'",
+    q: `'${folderId}' in parents and mimeType contains 'image/'`,
     fields: "files(id, name)",
   });
+
   const files = response.data.files;
   if (files.length > 0) {
     const randomIndex = Math.floor(Math.random() * files.length);
@@ -26,13 +28,13 @@ async function fetchRandomPhoto() {
   return null;
 }
 
-exports.handler = async function (event, context) {
+exports.handler = async (event, context) => {
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
         "Access-Control-Allow-Methods": "GET, OPTIONS",
       },
       body: "",
@@ -40,7 +42,31 @@ exports.handler = async function (event, context) {
   }
 
   try {
-    const fileId = await fetchRandomPhoto();
+    const authHeader = event.headers.authorization;
+    if (!authHeader) {
+      return {
+        statusCode: 401,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: "Unauthorized",
+      };
+    }
+
+    const accessToken = authHeader.split("Bearer ")[1];
+    const folderId = event.queryStringParameters.folderId;
+
+    if (!folderId) {
+      return {
+        statusCode: 400,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: "Missing folder ID",
+      };
+    }
+
+    const fileId = await fetchRandomPhoto(accessToken, folderId);
     if (!fileId) {
       return {
         statusCode: 404,
@@ -52,16 +78,23 @@ exports.handler = async function (event, context) {
       };
     }
 
-    const drive = google.drive({ version: "v3", auth: jwtClient });
+    const oauth2Client = new google.auth.OAuth2(
+      clientId,
+      clientSecret,
+      redirectUri
+    );
+    oauth2Client.setCredentials({ access_token: accessToken });
+
+    const drive = google.drive({ version: "v3", auth: oauth2Client });
     const response = await drive.files.get(
       { fileId, alt: "media" },
       { responseType: "stream" }
     );
 
-    const bufferStream = new stream.PassThrough();
+    const bufferStream = new PassThrough();
     response.data.pipe(bufferStream);
 
-    let chunks = [];
+    const chunks = [];
     bufferStream.on("data", (chunk) => {
       chunks.push(chunk);
     });
@@ -69,14 +102,16 @@ exports.handler = async function (event, context) {
     return new Promise((resolve, reject) => {
       bufferStream.on("end", () => {
         const responseBuffer = Buffer.concat(chunks);
+        const base64Image = responseBuffer.toString("base64");
         resolve({
           statusCode: 200,
           headers: {
-            "Content-Type": "image/jpeg", // Adjust the content type as needed
+            "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
           },
-          body: responseBuffer.toString("base64"),
-          isBase64Encoded: true,
+          body: JSON.stringify({
+            image: `data:image/jpeg;base64,${base64Image}`,
+          }),
         });
       });
 
