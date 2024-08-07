@@ -16,9 +16,8 @@
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^4.3.1",
     "axios": "^1.7.2",
-    "fs": "^0.0.1-security",
+    "crypto-js": "^4.2.0",
     "googleapis": "^140.0.1",
-    "path": "^0.12.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-google-drive-picker": "^1.2.2",
@@ -27,6 +26,7 @@
     "vite": "^5.3.5"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^22.1.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0"

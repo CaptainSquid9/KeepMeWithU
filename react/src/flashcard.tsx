@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./flashcard.css";
-import { Auth } from "./GooglePicker";
 import { useNavigate, useParams } from "react-router-dom";
+import CryptoJS, { AES } from "crypto-js";
 
 type ValuesObject = {
   [key: string]: number; // This allows indexing with numbers
@@ -24,9 +24,8 @@ function flashCard() {
   //Amount of layers to generate
   const Layers: number = 10;
   //Sent from picker
-  var accessToken = Auth;
-  var { folderId } = useParams();
-
+  const { folderId, Auth } = useParams();
+  var accessToken: string;
   //X
   const [divX, setDivX] = useState<ValuesObject>({});
 
@@ -84,6 +83,11 @@ function flashCard() {
 
   const fetchRandomPhoto = async (id: string) => {
     console.log(folderId);
+    if (Auth) {
+      accessToken = AES.decrypt(Auth, "TEST!NGPURP=S3S").toString(
+        CryptoJS.enc.Utf8
+      );
+    }
     const response = await fetch(`/api/randomPhoto?folderId=${folderId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -92,7 +96,6 @@ function flashCard() {
     if (response.ok) {
       const photoData = await response.json();
       const imageUrl = photoData.image;
-      console.log(imageUrl);
       setPhotoUrl((prevState) => ({ ...prevState, [id]: imageUrl }));
     } else {
       console.error("Error fetching photo", response.statusText);

@@ -12,7 +12,9 @@ async function fetchRandomPhoto(accessToken, folderId) {
     clientSecret,
     redirectUri
   );
-  oauth2Client.setCredentials({ access_token: accessToken });
+  oauth2Client.setCredentials({
+    access_token: accessToken,
+  });
 
   const drive = google.drive({ version: "v3", auth: oauth2Client });
   const response = await drive.files.list({

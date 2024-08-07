@@ -9,7 +9,7 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Picker />} />
-        <Route path="/display/:folderId" element={<Flashcard />} />
+        <Route path="/display/:folderId/:Auth" element={<Flashcard />} />
       </Routes>
     </Router>
   );

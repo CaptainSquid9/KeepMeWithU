@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import useDrivePicker from "react-google-drive-picker";
 import { useNavigate } from "react-router-dom";
+import { AES } from "crypto-js";
 
 var folderId: string | undefined;
 var Auth: string;
@@ -22,6 +23,7 @@ function Picker() {
       multiselect: false,
       setIncludeFolders: true,
       setSelectFolderEnabled: true,
+
       // customViews: customViewsArray, // custom view
       callbackFunction: (data) => {
         if (data.action === "cancel") {
@@ -31,7 +33,8 @@ function Picker() {
         if (data.docs[0].id) {
           folderId = data.docs[0].id;
           console.log(folderId);
-          navigate(`/display/${folderId}`);
+
+          navigate(`/display/${folderId}/${Auth}`);
         }
       },
     });
@@ -39,8 +42,9 @@ function Picker() {
 
   useEffect(() => {
     if (authResponse) {
-      Auth = authResponse.access_token;
-      console.log(Auth);
+      Auth = encodeURIComponent(
+        AES.encrypt(authResponse.access_token, "TEST!NGPURP=S3S").toString()
+      );
     }
   }, [authResponse]);
 
