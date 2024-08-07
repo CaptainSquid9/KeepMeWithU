@@ -1,10 +1,9 @@
 const { google } = require("googleapis");
 const { PassThrough } = require("stream");
 
-const clientId =
-  "1066485499060-0io67am55s3sbuj9qlru7dqb00olumd6.apps.googleusercontent.com";
-const clientSecret = "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";
-const redirectUri = "http://localhost:8888/auth/callback";
+const clientId = process.env.GOOGLE_CLIENTID;
+const clientSecret = process.env.GOOGLE_CLIENTSECRET;
+const redirectUri = process.env.GOOGLE_REDIRECTURI;
 
 async function fetchRandomPhoto(accessToken, folderId) {
   const oauth2Client = new google.auth.OAuth2(
