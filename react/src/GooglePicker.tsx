@@ -14,7 +14,7 @@ function Picker() {
     openPicker({
       clientId:
         "1066485499060-35so48hi03u1hcl9vmd3jcmjodfvr7ti.apps.googleusercontent.com",
-      developerKey: "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",
+      developerKey: "AIzaSyAyLR7NnUMHHrzFvxRX1vmN4XJ0bWEE5vk",
       viewId: "FOLDERS",
       // token: token, // pass oauth token in case you already have one
       showUploadView: true,
