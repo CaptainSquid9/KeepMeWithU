@@ -1,10 +1,6 @@
 // src/components/GoogleAuth.tsx
 import React from "react";
-import {
-  GoogleOAuthProvider,
-  GoogleLogin,
-  useGoogleLogin,
-} from "@react-oauth/google";
+import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 
 const CLIENT_ID =
   "1066485499060-0io67am55s3sbuj9qlru7dqb00olumd6.apps.googleusercontent.com";
