@@ -13,8 +13,8 @@ function Picker() {
   const handleOpenPicker = () => {
     openPicker({
       clientId:
-        "1066485499060-0io67am55s3sbuj9qlru7dqb00olumd6.apps.googleusercontent.com",
-      developerKey: "AIzaSyAyLR7NnUMHHrzFvxRX1vmN4XJ0bWEE5vk",
+        "1066485499060-35so48hi03u1hcl9vmd3jcmjodfvr7ti.apps.googleusercontent.com",
+      developerKey: "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",
       viewId: "FOLDERS",
       // token: token, // pass oauth token in case you already have one
       showUploadView: true,
