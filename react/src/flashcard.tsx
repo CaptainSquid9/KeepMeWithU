@@ -12,6 +12,7 @@ type BoolsObject = {
 type StringObject = {
   [key: string]: string; // This allows indexing with numbers
 };
+var LoadedInternal = -1;
 
 var CounterOut: ValuesObject;
 function flashCard() {
@@ -20,7 +21,6 @@ function flashCard() {
   var Timer: NodeJS.Timeout | undefined;
   var [IdleTimer, setIdleTimer] = useState<NodeJS.Timeout | undefined>();
   const [LoadedPictures, setLoadedPictures] = useState<number>(0);
-  var LoadedInternal = 0;
   //position for each layer
   //Amount of layers to generate
   const Layers: number = 10;
@@ -48,7 +48,7 @@ function flashCard() {
 
   function Start(elem: number) {
     setLoadedPictures(LoadedPictures + 1);
-    LoadedInternal + 1;
+    LoadedInternal += 1;
     console.log(`Loaded pictures: ${LoadedPictures}, ${LoadedInternal}`);
     if (LoadedPictures == Layers - 1 || LoadedInternal == Layers - 1) {
       setAllow(true);
@@ -57,9 +57,10 @@ function flashCard() {
         Swipe(0, false);
       }, 1000);
       setIdleTimer(Timer);
+      console.log("Done");
     } else if (LoadedPictures < Layers - 1 || LoadedInternal < Layers - 1) {
       let strElem = elem.toString();
-
+      console.log("positioning");
       //Set default
       setDivX((prevState) => ({
         ...prevState,
