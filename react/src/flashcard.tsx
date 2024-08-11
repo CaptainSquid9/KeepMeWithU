@@ -20,6 +20,7 @@ function flashCard() {
   var Timer: NodeJS.Timeout | undefined;
   var [IdleTimer, setIdleTimer] = useState<NodeJS.Timeout | undefined>();
   const [LoadedPictures, setLoadedPictures] = useState<number>(0);
+  var LoadedInternal = 0;
   //position for each layer
   //Amount of layers to generate
   const Layers: number = 10;
@@ -47,15 +48,16 @@ function flashCard() {
 
   function Start(elem: number) {
     setLoadedPictures(LoadedPictures + 1);
-    console.log(`Loaded pictures: ${LoadedPictures}`);
-    if (LoadedPictures == Layers - 1) {
+    LoadedInternal + 1;
+    console.log(`Loaded pictures: ${LoadedPictures}, ${LoadedInternal}`);
+    if (LoadedPictures == Layers - 1 || LoadedInternal == Layers - 1) {
       setAllow(true);
       AllowSlide = true;
       Timer = setTimeout(() => {
         Swipe(0, false);
       }, 1000);
       setIdleTimer(Timer);
-    } else if (LoadedPictures < Layers - 1) {
+    } else if (LoadedPictures < Layers - 1 || LoadedInternal < Layers - 1) {
       let strElem = elem.toString();
 
       //Set default
@@ -215,7 +217,7 @@ function flashCard() {
       setTimeout(() => {
         clearInterval(SlideInterval);
         setSwipedBool((prevState) => ({ ...prevState, [StrID]: false }));
-        fetchRandomPhoto(id.toString());
+        fetchRandomPhoto(StrID);
         setDivX((prevState) => ({
           ...prevState,
           [StrID]: window.innerWidth / 2,
