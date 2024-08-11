@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./flashcard.css";
 import { useNavigate, useParams } from "react-router-dom";
 import CryptoJS, { AES } from "crypto-js";
+import debounce from "debounce";
 
 type ValuesObject = {
   [key: string]: number; // This allows indexing with numbers
@@ -101,6 +102,7 @@ function flashCard() {
       const imageUrl = photoData.image;
       setPhotoUrl((prevState) => ({ ...prevState, [id]: imageUrl }));
     } else {
+      fetchRandomPhoto(id);
       console.error("Error fetching photo", response.statusText);
     }
   };
@@ -113,43 +115,6 @@ function flashCard() {
       console.log("Fetching");
     }
   }, []);
-
-  //Follow touch
-  function positionFollowTouch(e: React.TouchEvent<HTMLDivElement>) {
-    if (Allow) {
-      const id = Number(e.currentTarget.id);
-      const StrID = id.toString();
-
-      clearTimeout(IdleTimer);
-      clearTimeout(Timer);
-
-      if (SwipedBool[id] == false) {
-        setDivX((prevState) => ({
-          ...prevState,
-          [StrID]: e.touches[0].clientX,
-        }));
-        setDivY((prevState) => ({
-          ...prevState,
-          [StrID]: e.touches[0].clientY,
-        }));
-      }
-    }
-  }
-
-  //Follow mouse
-  function positionFollowMouse(e: React.MouseEvent<HTMLDivElement>) {
-    if (Allow && MouseDownBool) {
-      const id = Number(e.currentTarget.id);
-      const StrID = id.toString();
-      clearTimeout(IdleTimer);
-      clearTimeout(Timer);
-      if (SwipedBool[id] == false) {
-        setDivX((prevState) => ({ ...prevState, [StrID]: e.clientX }));
-        setDivY((prevState) => ({ ...prevState, [StrID]: e.clientY }));
-      }
-    }
-  }
-
   //Swipe animations
 
   function Swipe(id: number, update: boolean) {
@@ -164,31 +129,23 @@ function flashCard() {
       setAllow(true);
       setSwipedBool((prevState) => ({ ...prevState, [StrID]: true }));
 
+      const RandomQuarter = Math.floor(Math.random() * 3);
       //Move flash card on one of the four diagonals depending on quadrile
-      if (
-        divX[id] > window.innerWidth / 2 &&
-        divY[id] > window.innerHeight / 2
-      ) {
+      if (RandomQuarter == 0) {
         SlideInterval = setInterval(() => {
           setDivX((prevState) => ({ ...prevState, [StrID]: InternalCounterX }));
           setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
           InternalCounterX += 1;
           InternalCounterY += 1;
         }, 100);
-      } else if (
-        divX[id] < window.innerWidth / 2 &&
-        divY[id] < window.innerHeight / 2
-      ) {
+      } else if (RandomQuarter == 1) {
         SlideInterval = setInterval(() => {
           setDivX((prevState) => ({ ...prevState, [StrID]: InternalCounterX }));
           setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
           InternalCounterX -= 1;
           InternalCounterY -= 1;
         }, 100);
-      } else if (
-        divX[id] > window.innerWidth / 2 &&
-        divY[id] < window.innerHeight / 2
-      ) {
+      } else if (RandomQuarter == 2) {
         SlideInterval = setInterval(() => {
           setDivX((prevState) => ({ ...prevState, [StrID]: InternalCounterX }));
           setDivY((prevState) => ({ ...prevState, [StrID]: InternalCounterY }));
@@ -244,25 +201,17 @@ function flashCard() {
           <div
             id={i.toString()}
             className={`flashCardDiv ${SwipedBool[i] ? "FadeOut" : ""}`}
-            onTouchMove={(e) => {
-              positionFollowTouch(e),
-                clearTimeout(IdleTimer),
-                clearTimeout(Timer);
+            onTouchMove={() => {
+              clearTimeout(IdleTimer), clearTimeout(Timer);
             }}
             onTouchEnd={() => {
               Swipe(i, false);
             }}
-            onMouseDown={(e) => {
-              setMDBool(true),
-                positionFollowMouse(e),
-                clearTimeout(IdleTimer),
-                clearTimeout(Timer);
+            onMouseDown={() => {
+              setMDBool(true), clearTimeout(IdleTimer), clearTimeout(Timer);
             }}
-            onMouseMove={(e) => {
-              positionFollowMouse(e);
-            }}
-            onMouseUp={(e) => {
-              setMDBool(false), positionFollowMouse(e), Swipe(i, false);
+            onMouseUp={() => {
+              setMDBool(false), Swipe(i, false);
             }}
             style={{ top: divY[i], left: divX[i], zIndex: Counter[i] }}
           >
