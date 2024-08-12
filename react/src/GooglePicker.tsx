@@ -14,7 +14,7 @@ function Picker() {
     openPicker({
       clientId: import.meta.env.VITE_ENVIRONMENT_GOOGLE_CLIENTID,
       developerKey: import.meta.env.VITE_ENVIRONMENT_API,
-      viewId: "FOLDERS",
+      viewId: "DOCS_IMAGES",
       // token: token, // pass oauth token in case you already have one
       showUploadView: true,
       showUploadFolders: true,
@@ -49,6 +49,7 @@ function Picker() {
 
   return (
     <div>
+      <h1>Use the google credentials from the hackathon project description</h1>
       <button onClick={() => handleOpenPicker()}>Open Picker</button>
     </div>
   );
