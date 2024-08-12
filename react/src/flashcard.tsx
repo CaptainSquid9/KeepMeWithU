@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./flashcard.css";
 import { useNavigate, useParams } from "react-router-dom";
 import CryptoJS, { AES } from "crypto-js";
-import debounce from "debounce";
 
 type ValuesObject = {
   [key: string]: number; // This allows indexing with numbers
@@ -50,7 +49,7 @@ function flashCard() {
   function Start(elem: number) {
     setLoadedPictures(LoadedPictures + 1);
     LoadedInternal += 1;
-    console.log(`Loaded pictures: ${LoadedPictures}, ${LoadedInternal}`);
+    //console.log(`Loaded pictures: ${LoadedPictures}, ${LoadedInternal}`);
     if (LoadedPictures == Layers - 1 || LoadedInternal == Layers - 1) {
       setAllow(true);
       AllowSlide = true;
@@ -58,10 +57,10 @@ function flashCard() {
         Swipe(0, false);
       }, 1000);
       setIdleTimer(Timer);
-      console.log("Done");
+      //  console.log("Done");
     } else if (LoadedPictures < Layers - 1 || LoadedInternal < Layers - 1) {
       let strElem = elem.toString();
-      console.log("positioning");
+      //console.log("positioning");
       //Set default
       setDivX((prevState) => ({
         ...prevState,
@@ -77,7 +76,7 @@ function flashCard() {
         [strElem]: 214748364 - elem,
       }));
       CounterOut = { ...CounterOut, [strElem]: 214748364 - elem };
-      console.log(CounterOut);
+      //console.log(CounterOut);
       // All images have been loaded: ALlow touch
     }
   }
@@ -86,7 +85,7 @@ function flashCard() {
   // Called by every layer
 
   const fetchRandomPhoto = async (id: string) => {
-    console.log(folderId);
+    //console.log(folderId);
     if (Auth) {
       accessToken = AES.decrypt(Auth, "TEST!NGPURP=S3S").toString(
         CryptoJS.enc.Utf8
@@ -112,7 +111,7 @@ function flashCard() {
     }
     for (var i = 0; i < Layers; i++) {
       fetchRandomPhoto(i.toString());
-      console.log("Fetching");
+      //  console.log("Fetching");
     }
   }, []);
   //Swipe animations
@@ -126,7 +125,9 @@ function flashCard() {
 
       clearTimeout(IdleTimer);
       clearTimeout(Timer);
-      setAllow(true);
+
+      setAllow(false);
+      AllowSlide = false;
       setSwipedBool((prevState) => ({ ...prevState, [StrID]: true }));
 
       const RandomQuarter = Math.floor(Math.random() * 3);
@@ -173,6 +174,8 @@ function flashCard() {
 
       //Once animation is done
       setTimeout(() => {
+        setAllow(true);
+        AllowSlide = true;
         clearInterval(SlideInterval);
         setSwipedBool((prevState) => ({ ...prevState, [StrID]: false }));
         fetchRandomPhoto(StrID);
@@ -189,8 +192,8 @@ function flashCard() {
           [StrID]: CounterOut[id] - Layers,
         }));
         CounterOut = { ...CounterOut, [StrID]: CounterOut[id] - Layers };
-      }, 1000);
-      console.log(`Updated: ${CounterOut[id]}`);
+      }, 2000);
+      // console.log(`Updated: ${CounterOut[id]}`);
     }
   }
 

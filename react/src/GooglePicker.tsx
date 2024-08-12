@@ -26,12 +26,12 @@ function Picker() {
       // customViews: customViewsArray, // custom view
       callbackFunction: (data) => {
         if (data.action === "cancel") {
-          console.log("User clicked cancel/close button");
+          // console.log("User clicked cancel/close button");
           return null;
         }
         if (data.docs[0].id) {
           folderId = data.docs[0].id;
-          console.log(folderId);
+          //  console.log(folderId);
 
           navigate(`/display/${folderId}/${Auth}`);
         }
