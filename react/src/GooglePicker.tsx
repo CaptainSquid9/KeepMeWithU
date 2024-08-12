@@ -12,9 +12,8 @@ function Picker() {
   // const customViewsArray = [new google.picker.DocsView()]; // custom view
   const handleOpenPicker = () => {
     openPicker({
-      clientId:
-        "1066485499060-35so48hi03u1hcl9vmd3jcmjodfvr7ti.apps.googleusercontent.com",
-      developerKey: "AIzaSyAyLR7NnUMHHrzFvxRX1vmN4XJ0bWEE5vk",
+      clientId: import.meta.env.VITE_ENVIRONMENT_GOOGLE_CLIENTID,
+      developerKey: import.meta.env.VITE_ENVIRONMENT_API,
       viewId: "FOLDERS",
       // token: token, // pass oauth token in case you already have one
       showUploadView: true,
