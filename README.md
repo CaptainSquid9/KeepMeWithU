@@ -1,6 +1,6 @@
-# Keep Me With U
-Part of Hacktivism Hackathon(https://hacktivismbypolitechs.devpost.com/)
 ![small](https://github.com/user-attachments/assets/ffa936a9-b0a9-44d1-b6b2-05dcc33bd740)
+# Keep Me With U
+Part of Hacktivism Hackathon (https://hacktivismbypolitechs.devpost.com/)
 
 ## Test account access
 ### Mail: testkeepmewithu@gmail.com pass: ThankYouForTesting
