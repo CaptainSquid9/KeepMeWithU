@@ -35,6 +35,6 @@ This ended up being more than just a software project, as it allows the user to 
 The front end is very rough and will definitely improve in the future. Furthermore, I have to figure out if an old physical device is the best way to use this web app. Could there be another way to make this moving frame feel like a part of the house? And finally, I have to refine the use of the authentication token, as it poses difficulties once a significant amount of time has passe
 
 ### Video Explanation [Will be updated soon]
-![Video_Explanation_Recorded_At_2AM](https://www.youtube.com/watch?v=zH4DjLzOYc8)
+ [![Video_Explanation_Recorded_At_2AM](https://img.youtube.com/vi/zH4DjLzOYc8/0.jpg)](https://www.youtube.com/watch?v=zH4DjLzOYc8)
 
 
