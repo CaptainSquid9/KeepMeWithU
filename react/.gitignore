@@ -28,4 +28,5 @@ dist-ssr
 .netlify
 
 # Personal V
-PersonalV.js
+functions/Oath-service.json
+functions/Oath.json
